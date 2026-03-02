@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Modern E-Commerce Web Application 🛒
 
-## Getting Started
+A full-stack, highly optimized e-commerce web application built with the latest **Next.js (App Router)**. This project demonstrates modern React architecture, separating data-fetching server components from interactive client components, and utilizes Server Actions for secure data mutations.
 
-First, run the development server:
+## 📖 About The Project
+
+This application simulates a complete e-commerce experience. It consists of two main parts:
+1. **Customer Storefront:** Allows users to browse products, filter by categories and prices, add items to their shopping cart, and simulate a checkout process. It also includes a fully functional user authentication system (register, login, profile management, and order history).
+2. **Admin Dashboard:** A secure, restricted area for store administrators to manage products (CRUD operations), track sales, and view user details and incoming orders.
+
+The app uses [FakeStoreAPI](https://fakestoreapi.com/) as its headless backend for mocking data.
+
+## ✨ Key Features
+
+### 🛍️ For Customers
+* **Product Catalog:** Browse products with Server-Side Rendering (SSR) for lightning-fast initial loads and great SEO.
+* **Advanced Filtering:** Filter products dynamically by category and price range.
+* **Shopping Cart:** Add, remove, and update quantities of products in the cart using global Context API state.
+* **User Authentication:** Secure login and registration flows.
+* **User Dashboard:** Edit personal information, manage delivery addresses, and view order history.
+
+### 🛡️ For Administrators
+* **Secure Login:** Protected admin route using Next.js Middleware, HttpOnly Cookies, and Server Actions.
+* **Product Management:** Add, update, and delete products directly from the dashboard.
+* **Sales Reports:** View total sales and filter orders by specific date ranges.
+* **User & Order Management:** Lazy-loaded accordions to view specific user details and order contents without overloading the server.
+
+## 🛠️ Tech Stack & Architecture
+
+* **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+* **Library:** [React 19](https://react.dev/)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+* **Forms & Validation:** [Formik](https://formik.org/) & [Yup](https://github.com/jquense/yup)
+* **Architecture Highlights:**
+  * **Server Components (Smart):** Data fetching happens on the server close to the database/API, ensuring zero layout shift and minimal JS sent to the client.
+  * **Client Components (Dumb):** Purely presentational components handling UI states and user interactions.
+  * **Server Actions:** Securely handling form submissions and data mutations (like deleting products or logging in as admin) with automatic cache revalidation (`revalidatePath`).
+  * **Parallel Data Fetching:** Utilizing `Promise.all` to fetch non-dependent data simultaneously, reducing TTFB (Time to First Byte).
+
+## 🚀 How to Run the Project Locally
+
+Follow these steps to get a copy of the project up and running on your local machine.
+
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) (v18 or higher) and `npm` (or `yarn`/`pnpm`) installed.
+
+### 1. Clone the repository
+```bash
+git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+cd your-repo-name
+
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+
+```
+
+### 3. Set up Environment Variables
+
+Create a `.env.local` file in the root directory of the project. You need to configure the base API URL and set up a secure password for the Admin Dashboard.
+
+Add the following configuration to `.env.local`:
+
+```env
+# The base URL for the backend API
+NEXT_PUBLIC_API_URL=[https://fakestoreapi.com](https://fakestoreapi.com)
+
+# Password to access the /admin dashboard
+ADMIN_PASSWORD=admin123
+
+```
+
+### 4. Start the Development Server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 5. Open the Application
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) in your browser to view the customer storefront.
+To access the Admin Dashboard, navigate to [http://localhost:3000/admin](https://www.google.com/search?q=http://localhost:3000/admin) and log in using the password defined in your `.env.local` file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📂 Project Structure
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* `/src/app`: Contains the Next.js App Router pages, layouts, and loading states.
+* `/src/components`: Contains reusable UI components (divided into Admin, ShopPage, User, etc.).
+* `/src/actions`: Next.js Server Actions for secure backend operations (e.g., `adminAuth.js`).
+* `/src/utils`: Utility functions and the centralized `api.js` layer for all external fetches.
+* `/src/context`: React Context providers for global state management (Auth, Cart).
+* `/src/middleware.js`: Edge middleware protecting the `/admin` routes.
