@@ -1,47 +1,19 @@
 // src/components/ShopPage/Cart.js
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import QuantitySelector from "@/components/ShopPage/QuantitySelector";
 import { getUserIdFromToken } from "@/utils/decodeToken";
 import { useRouter } from "next/navigation";
 
-const cartReducer = (state, action) => {
-      switch (action.type) {
-            case "ADD_ITEM":
-                  return [...state, action.payload];
-            case "REMOVE_ITEM":
-                  return state.filter((item) => item.id !== action.payload);
-            case "UPDATE_QUANTITY":
-                  return state.map((item) =>
-                        item.id === action.payload.id ? { ...item, quantity: action.payload.quantity } : item
-                  );
-            case "CLEAR_CART":
-                  return [];
-            default:
-                  return state;
-      }
-};
-
 export default function Cart() {
-      const [state, dispatch] = useReducer(cartReducer, []);
       const { cart, removeFromCart, clearCart, updateQuantity, totalAmount } = useCart();
       const router = useRouter();
       const [isLoggedIn, setIsLoggedIn] = useState(false);
       const [paymentStatus, setPaymentStatus] = useState(null);
       const [showAddressModal, setShowAddressModal] = useState(false);
       const [userAddress, setUserAddress] = useState("");
-
-      useEffect(() => {
-            dispatch({ type: "CLEAR_CART" });
-            cart.forEach((item) => {
-                  dispatch({
-                        type: "ADD_ITEM",
-                        payload: item,
-                  });
-            });
-      }, [cart]);
 
       useEffect(() => {
             const token = localStorage.getItem("authToken");
@@ -148,24 +120,12 @@ export default function Cart() {
                                                       <QuantitySelector
                                                             initialQuantity={product.quantity}
                                                             onChange={(newQuantity) => {
+                                                                  // Korzystamy tylko z funkcji kontekstu
                                                                   updateQuantity(product.id, newQuantity);
-                                                                  dispatch({
-                                                                        type: "UPDATE_QUANTITY",
-                                                                        payload: {
-                                                                              id: product.id,
-                                                                              quantity: newQuantity,
-                                                                        },
-                                                                  });
                                                             }}
                                                       />
                                                       <button
-                                                            onClick={() => {
-                                                                  removeFromCart(product.id);
-                                                                  dispatch({
-                                                                        type: "REMOVE_ITEM",
-                                                                        payload: product.id,
-                                                                  });
-                                                            }}
+                                                            onClick={() => removeFromCart(product.id)}
                                                             className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
                                                       >
                                                             Delete
@@ -199,10 +159,7 @@ export default function Cart() {
                                     </div>
                               )}
                               <button
-                                    onClick={() => {
-                                          clearCart();
-                                          dispatch({ type: "CLEAR_CART" });
-                                    }}
+                                    onClick={clearCart}
                                     className="bg-gray-500 text-white p-2 rounded mt-2 w-full hover:bg-gray-600"
                               >
                                     Clear cart
