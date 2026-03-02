@@ -14,9 +14,9 @@ export default function AdminLayout({ children }) {
       };
 
       return (
-            <div>
+            <>
                   <AdminNavbar onLogout={handleLogout} />
                   {children}
-            </div>
+            </>
       );
 }

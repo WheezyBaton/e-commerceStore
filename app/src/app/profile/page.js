@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import UserProfile from "@/components/User/UserProfile";
 import OrderHistory from "@/components/User/OrderHistory";
 import { decodeToken } from "@/utils/decodeToken";
-import { getUser, getUserOrders, getProduct } from "@/lib/api";
+import { getUser, getUserOrders, getProduct } from "@/utils/api";
 
 export default function ProfilePage() {
       const [userData, setUserData] = useState(null);

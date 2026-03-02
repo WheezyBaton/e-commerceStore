@@ -1,5 +1,4 @@
 // src/components/HomePage/FeaturedProducts.js
-
 import ProductCard from "@/components/ShopPage/ProductCard";
 
 export default function FeaturedProducts({ products, category }) {

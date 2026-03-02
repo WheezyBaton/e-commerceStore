@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getProducts } from "@/lib/api";
+import { getProducts } from "@/utils/api";
 
 export default function SearchBar() {
       const router = useRouter();

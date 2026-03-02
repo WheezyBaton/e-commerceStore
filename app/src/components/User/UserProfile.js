@@ -14,10 +14,6 @@ export default function UserProfile({ userData }) {
             }
       }, [userData]);
 
-      if (!userData) {
-            return <p>Loading user data...</p>;
-      }
-
       return (
             <div className="space-y-8 w-96 mb-4">
                   <div>

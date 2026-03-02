@@ -1,6 +1,4 @@
 // src/components/ShopPage/CategoryFilter.js
-"use client";
-
 export default function CategoryFilter({ categories = [], onCategoryChange }) {
       return (
             <div className="mb-4">

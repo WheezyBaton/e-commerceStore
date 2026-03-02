@@ -1,7 +1,6 @@
 // src/app/products/page.js
-
 import ProductList from "@/components/ShopPage/ProductList";
-import { getProducts, getCategories } from "@/lib/api";
+import { getProducts, getCategories } from "@/utils/api";
 
 export default async function ProductsPage() {
       const [products, categories] = await Promise.all([getProducts(), getCategories()]);

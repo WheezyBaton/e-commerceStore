@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { getUserOrders } from "@/lib/api";
+import { getUserOrders } from "@/utils/api";
 
 export default function UserManagement({ initialUsers = [] }) {
       const [expandedUserId, setExpandedUserId] = useState(null);
@@ -22,6 +22,7 @@ export default function UserManagement({ initialUsers = [] }) {
                   setExpandedUserId(null);
             } else {
                   setExpandedUserId(userId);
+
                   if (!userOrders[userId]) {
                         handleFetchUserOrders(userId);
                   }
@@ -40,6 +41,7 @@ export default function UserManagement({ initialUsers = [] }) {
                                           </h3>
                                           <p className="text-gray-600">{user.email}</p>
                                     </div>
+
                                     {expandedUserId === user.id && (
                                           <div className="mt-4">
                                                 <p>
@@ -52,32 +54,45 @@ export default function UserManagement({ initialUsers = [] }) {
                                                 <p>
                                                       <strong>ZIP code:</strong> {user.address.zipcode}
                                                 </p>
+
                                                 <h4 className="text-lg font-semibold mt-4">Orders:</h4>
-                                                {userOrders[user.id]?.length > 0 ? (
-                                                      userOrders[user.id].map((order) => (
-                                                            <div key={order.id} className="border p-4 rounded mt-2">
-                                                                  <p>
-                                                                        <strong>Order ID:</strong> {order.id}
-                                                                  </p>
-                                                                  <p>
-                                                                        <strong>Order date:</strong>{" "}
-                                                                        {new Date(order.date).toLocaleDateString()}
-                                                                  </p>
-                                                                  <p>
-                                                                        <strong>Products:</strong>
-                                                                  </p>
-                                                                  <ul className="list-disc list-inside">
-                                                                        {order.products.map((product) => (
-                                                                              <li key={product.productId}>
-                                                                                    Product ID: {product.productId} -
-                                                                                    Quantity: {product.quantity}
-                                                                              </li>
-                                                                        ))}
-                                                                  </ul>
-                                                            </div>
-                                                      ))
+                                                {userOrders[user.id] ? (
+                                                      userOrders[user.id].length > 0 ? (
+                                                            userOrders[user.id].map((order) => (
+                                                                  <div
+                                                                        key={order.id}
+                                                                        className="border p-4 rounded mt-2"
+                                                                  >
+                                                                        <p>
+                                                                              <strong>Order ID:</strong> {order.id}
+                                                                        </p>
+                                                                        <p>
+                                                                              <strong>Order date:</strong>{" "}
+                                                                              {new Date(
+                                                                                    order.date,
+                                                                              ).toLocaleDateString()}
+                                                                        </p>
+                                                                        <p>
+                                                                              <strong>Products:</strong>
+                                                                        </p>
+                                                                        <ul className="list-disc list-inside">
+                                                                              {order.products.map((product) => (
+                                                                                    <li key={product.productId}>
+                                                                                          Product ID:{" "}
+                                                                                          {product.productId} -
+                                                                                          Quantity: {product.quantity}
+                                                                                    </li>
+                                                                              ))}
+                                                                        </ul>
+                                                                  </div>
+                                                            ))
+                                                      ) : (
+                                                            <p>No orders</p>
+                                                      )
                                                 ) : (
-                                                      <p>No orders</p>
+                                                      <p className="text-blue-500 animate-pulse">
+                                                            Ładowanie zamówień...
+                                                      </p>
                                                 )}
                                           </div>
                                     )}

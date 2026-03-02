@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import QuantitySelector from "@/components/ShopPage/QuantitySelector";
 import { getUserIdFromToken } from "@/utils/decodeToken";
 import { useRouter } from "next/navigation";
-import { createOrderApi } from "@/lib/api";
+import { createOrderApi } from "@/utils/api";
 
 export default function Cart() {
       const { cart, removeFromCart, clearCart, updateQuantity, totalAmount } = useCart();
@@ -108,7 +108,6 @@ export default function Cart() {
                                                       <QuantitySelector
                                                             initialQuantity={product.quantity}
                                                             onChange={(newQuantity) => {
-                                                                  // Korzystamy tylko z funkcji kontekstu
                                                                   updateQuantity(product.id, newQuantity);
                                                             }}
                                                       />

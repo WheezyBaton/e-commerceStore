@@ -1,4 +1,4 @@
-// src/lib/api.js
+// src/utils/api.js
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://fakestoreapi.com";
 
 export async function getProducts() {

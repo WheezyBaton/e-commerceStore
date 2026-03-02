@@ -1,28 +1,16 @@
 // src/components/Admin/SalesReport.js
 "use client";
 
-import { useEffect, useState } from "react";
-import { getOrdersByDate } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
-export default function SalesReport({ initialOrders }) {
-      const [orders, setOrders] = useState(initialOrders || []);
-      const [startDate, setStartDate] = useState("2019-12-10");
-      const [endDate, setEndDate] = useState("2020-10-10");
+export default function SalesReport({ orders, currentStart, currentEnd }) {
+      const router = useRouter();
 
-      const handleFetchOrders = async () => {
-            try {
-                  const data = await getOrdersByDate(startDate, endDate);
-                  setOrders(data);
-            } catch (error) {
-                  console.error("Error downloading orders:", error);
-            }
+      const handleDateChange = (type, value) => {
+            const newStart = type === "start" ? value : currentStart;
+            const newEnd = type === "end" ? value : currentEnd;
+            router.push(`/admin/sales?start=${newStart}&end=${newEnd}`);
       };
-
-      useEffect(() => {
-            if (orders !== initialOrders) {
-                  handleFetchOrders();
-            }
-      }, [startDate, endDate]);
 
       const totalSales = orders.reduce((total, order) => total + order.products.length, 0);
 
@@ -33,18 +21,18 @@ export default function SalesReport({ initialOrders }) {
                         <label className="block text-gray-700">Start date</label>
                         <input
                               type="date"
-                              value={startDate}
-                              onChange={(e) => setStartDate(e.target.value)}
-                              className="border p-2 rounded"
+                              value={currentStart}
+                              onChange={(e) => handleDateChange("start", e.target.value)}
+                              className="border p-2 rounded text-black"
                         />
                   </div>
                   <div className="mb-4">
                         <label className="block text-gray-700">End date:</label>
                         <input
                               type="date"
-                              value={endDate}
-                              onChange={(e) => setEndDate(e.target.value)}
-                              className="border p-2 rounded"
+                              value={currentEnd}
+                              onChange={(e) => handleDateChange("end", e.target.value)}
+                              className="border p-2 rounded text-black"
                         />
                   </div>
                   <div className="mt-4">

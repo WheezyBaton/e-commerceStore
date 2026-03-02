@@ -1,7 +1,6 @@
 // src/app/product/[id]/page.js
-
 import ProductDetails from "@/components/ShopPage/ProductDetails";
-import { getProduct } from "@/lib/api";
+import { getProduct } from "@/utils/api";
 
 export default async function ProductPage({ params }) {
       const { id } = await params;

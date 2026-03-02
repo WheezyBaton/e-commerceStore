@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getUser } from "@/lib/api";
+import { getUser } from "@/utils/api";
 
 export default function OrderManagement({ initialOrders = [] }) {
       const [expandedOrderId, setExpandedOrderId] = useState(null);

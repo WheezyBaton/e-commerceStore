@@ -1,5 +1,4 @@
 // src/components/ShopPage/ProductDetails.js
-
 import AddToCartButton from "@/components/ShopPage/AddToCartButton";
 
 export default function ProductDetails({ product }) {

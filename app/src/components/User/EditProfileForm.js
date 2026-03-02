@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateUserApi } from "@/lib/api";
+import { updateUserApi } from "@/utils/api";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 

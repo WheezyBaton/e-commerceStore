@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { addProductApi, deleteProductApi, updateProductApi } from "@/lib/api";
+import { addProductApi, deleteProductApi, updateProductApi } from "@/utils/api";
 
 export default function ProductManagement({ initialProducts = [] }) {
       const [products, setProducts] = useState(initialProducts);
