@@ -2,20 +2,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFetch } from "@/hooks/useFetch";
+import { getUser } from "@/lib/api";
 
-export default function OrderManagement() {
+export default function OrderManagement({ initialOrders = [] }) {
       const [expandedOrderId, setExpandedOrderId] = useState(null);
       const [userDetails, setUserDetails] = useState({});
 
-      const { data: orders, loading: ordersLoading, error: ordersError } = useFetch("https://fakestoreapi.com/carts");
-
       useEffect(() => {
             if (expandedOrderId) {
-                  const order = orders?.find((o) => o.id === expandedOrderId);
+                  const order = initialOrders.find((o) => o.id === expandedOrderId);
                   if (order && !userDetails[order.userId]) {
-                        fetch(`https://fakestoreapi.com/users/${order.userId}`)
-                              .then((response) => response.json())
+                        getUser(order.userId)
                               .then((data) => {
                                     setUserDetails((prev) => ({ ...prev, [order.userId]: data }));
                               })
@@ -24,25 +21,17 @@ export default function OrderManagement() {
                               });
                   }
             }
-      }, [expandedOrderId, orders, userDetails]);
+      }, [expandedOrderId, initialOrders, userDetails]);
 
       const toggleOrderDetails = (orderId) => {
             setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
       };
 
-      if (ordersLoading) {
-            return <p className="p-4">Loading orders...</p>;
-      }
-
-      if (ordersError) {
-            return <p className="p-4 text-red-500">Error loading orders: {ordersError.message}</p>;
-      }
-
       return (
             <div className="p-4">
                   <h2 className="text-2xl font-bold mb-4">Orders</h2>
                   <div>
-                        {orders.map((order) => (
+                        {initialOrders.map((order) => (
                               <div key={order.id} className="border p-4 rounded mb-2">
                                     <div className="cursor-pointer" onClick={() => toggleOrderDetails(order.id)}>
                                           <h3 className="text-lg font-bold">Order #{order.id}</h3>

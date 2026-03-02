@@ -2,15 +2,14 @@
 "use client";
 
 import { useState } from "react";
+import { registerApi } from "@/lib/api";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
       email: Yup.string().email("Invalid email format").required("Email is required"),
       username: Yup.string().required("Username is required"),
-      password: Yup.string()
-            .min(6, "Password must be at least 6 characters")
-            .required("Password is required"),
+      password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
       firstname: Yup.string().required("First name is required"),
       lastname: Yup.string().required("Last name is required"),
       city: Yup.string().required("City is required"),
@@ -49,24 +48,10 @@ export default function UserRegister() {
             };
 
             try {
-                  const response = await fetch("https://fakestoreapi.com/users", {
-                        method: "POST",
-                        headers: {
-                              "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(userData),
-                  });
-
-                  const data = await response.json();
-
-                  if (response.ok) {
-                        setMessage(`User registered successfully! ID: ${data.id}`);
-                  } else {
-                        setMessage(`Registration failed: ${data.error || "Unknown error"}`);
-                  }
+                  const data = await registerApi(userData);
+                  setMessage(`User registered successfully! ID: ${data.id}`);
             } catch (error) {
                   setMessage("An error occurred during registration.");
-                  console.error("Error:", error);
             }
       };
 
@@ -91,9 +76,7 @@ export default function UserRegister() {
                         <Form className="space-y-4">
                               <div className="xl:flex justify-around">
                                     <div>
-                                          <p className="font-bold text-2xl text-center mb-5">
-                                                Person:
-                                          </p>
+                                          <p className="font-bold text-2xl text-center mb-5">Person:</p>
                                           <div className="shadow-md p-4 mt-auto mb-4">
                                                 <div>
                                                       <label className="block text-gray-700 font-bold mb-2">
@@ -193,9 +176,7 @@ export default function UserRegister() {
                                           </div>
                                     </div>
                                     <div>
-                                          <p className="font-bold text-2xl text-center mb-5">
-                                                Adress:
-                                          </p>
+                                          <p className="font-bold text-2xl text-center mb-5">Adress:</p>
                                           <div className="shadow-md p-4 mt-auto mb-4">
                                                 <div>
                                                       <label className="block text-gray-700 font-bold mb-2">
@@ -265,10 +246,7 @@ export default function UserRegister() {
                               </div>
 
                               <div className="mt-4">
-                                    <button
-                                          type="submit"
-                                          className="bg-blue-500 text-white p-2 rounded w-full"
-                                    >
+                                    <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
                                           Register
                                     </button>
                               </div>

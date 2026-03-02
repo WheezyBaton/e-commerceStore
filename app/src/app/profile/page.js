@@ -5,53 +5,55 @@ import { useState, useEffect } from "react";
 import UserProfile from "@/components/User/UserProfile";
 import OrderHistory from "@/components/User/OrderHistory";
 import { decodeToken } from "@/utils/decodeToken";
-import { useFetch } from "@/hooks/useFetch";
+import { getUser, getUserOrders, getProduct } from "@/lib/api";
 
 export default function ProfilePage() {
       const [userData, setUserData] = useState(null);
+      const [orders, setOrders] = useState([]);
+      const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
-      const token = localStorage.getItem("authToken");
-      const decodedToken = token ? decodeToken(token) : null;
-      const userId = decodedToken?.sub;
-
-      const {
-            data: fetchedUserData,
-            loading: userLoading,
-            error: userError,
-      } = useFetch(userId ? `https://fakestoreapi.com/users/${userId}` : null);
 
       useEffect(() => {
-            if (fetchedUserData) {
-                  setUserData(fetchedUserData);
-            }
-      }, [fetchedUserData]);
+            const fetchProfileData = async () => {
+                  try {
+                        const token = localStorage.getItem("authToken");
+                        if (!token) throw new Error("Brak zalogowanego użytkownika.");
 
-      useEffect(() => {
-            if (userError) {
-                  setError(userError.message);
-            } else if (!token) {
-                  setError("The user is not logged in.");
-            } else if (!userId) {
-                  setError("Invalid token: missing user ID.");
-            }
-      }, [userError, token, userId]);
+                        const userId = decodeToken(token).sub;
 
-      if (userLoading) {
-            return <p className="text-center">Loading user data...</p>;
-      }
+                        const [user, userOrders] = await Promise.all([getUser(userId), getUserOrders(userId)]);
 
-      if (error) {
-            return <p className="text-red-500 text-center">{error}</p>;
-      }
+                        const enrichedOrders = await Promise.all(
+                              userOrders.map(async (order) => {
+                                    const productsWithDetails = await Promise.all(
+                                          order.products.map(async (p) => {
+                                                const productDetails = await getProduct(p.productId);
+                                                return { ...p, name: productDetails?.title };
+                                          }),
+                                    );
+                                    return { ...order, products: productsWithDetails };
+                              }),
+                        );
 
-      if (!userData) {
-            return <p className="text-center">No user data found.</p>;
-      }
+                        setUserData(user);
+                        setOrders(enrichedOrders);
+                  } catch (err) {
+                        setError(err.message);
+                  } finally {
+                        setLoading(false);
+                  }
+            };
+
+            fetchProfileData();
+      }, []);
+
+      if (loading) return <p className="text-center mt-20">Loading profile data...</p>;
+      if (error) return <p className="text-center text-red-500 mt-20">{error}</p>;
 
       return (
-            <div className="container mx-auto p-4 xl:flex justify-around xl:mt-56 mb-80">
+            <div className="container mx-auto p-4 xl:flex justify-around xl:mt-32 mb-80">
                   <UserProfile userData={userData} />
-                  <OrderHistory userId={userData.id} />
+                  <OrderHistory initialOrders={orders} />
             </div>
       );
 }

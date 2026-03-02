@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import QuantitySelector from "@/components/ShopPage/QuantitySelector";
 import { getUserIdFromToken } from "@/utils/decodeToken";
 import { useRouter } from "next/navigation";
+import { createOrderApi } from "@/lib/api";
 
 export default function Cart() {
       const { cart, removeFromCart, clearCart, updateQuantity, totalAmount } = useCart();
@@ -54,21 +55,8 @@ export default function Cart() {
                   }));
 
                   try {
-                        const response = await fetch("https://fakestoreapi.com/carts", {
-                              method: "POST",
-                              headers: {
-                                    "Content-Type": "application/json",
-                              },
-                              body: JSON.stringify({
-                                    userId,
-                                    date,
-                                    products,
-                              }),
-                        });
-
-                        const result = await response.json();
+                        const result = await createOrderApi({ userId, date, products });
                         console.log("Order submitted successfully:", result);
-
                         clearCart();
                   } catch (error) {
                         console.error("Error submitting order:", error);

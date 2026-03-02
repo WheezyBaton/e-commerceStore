@@ -1,36 +1,21 @@
 // src/components/Admin/UserManagement.js
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { getUserOrders } from "@/lib/api";
 
-export default function UserManagement() {
-      const [users, setUsers] = useState([]);
+export default function UserManagement({ initialUsers = [] }) {
       const [expandedUserId, setExpandedUserId] = useState(null);
       const [userOrders, setUserOrders] = useState({});
 
-      const fetchUsers = async () => {
+      const handleFetchUserOrders = async (userId) => {
             try {
-                  const response = await fetch("https://fakestoreapi.com/users");
-                  const data = await response.json();
-                  setUsers(data);
-            } catch (error) {
-                  console.error("Error retrieving users:", error);
-            }
-      };
-
-      const fetchUserOrders = async (userId) => {
-            try {
-                  const response = await fetch(`https://fakestoreapi.com/carts/user/${userId}`);
-                  const data = await response.json();
+                  const data = await getUserOrders(userId);
                   setUserOrders((prev) => ({ ...prev, [userId]: data }));
             } catch (error) {
                   console.error("Error retrieving user orders:", error);
             }
       };
-
-      useEffect(() => {
-            fetchUsers();
-      }, []);
 
       const toggleUserDetails = (userId) => {
             if (expandedUserId === userId) {
@@ -38,7 +23,7 @@ export default function UserManagement() {
             } else {
                   setExpandedUserId(userId);
                   if (!userOrders[userId]) {
-                        fetchUserOrders(userId);
+                        handleFetchUserOrders(userId);
                   }
             }
       };
@@ -47,7 +32,7 @@ export default function UserManagement() {
             <div className="p-4">
                   <h2 className="text-2xl font-bold mb-4">Users</h2>
                   <div>
-                        {users.map((user) => (
+                        {initialUsers.map((user) => (
                               <div key={user.id} className="border p-4 rounded mb-2">
                                     <div className="cursor-pointer" onClick={() => toggleUserDetails(user.id)}>
                                           <h3 className="text-lg font-bold">

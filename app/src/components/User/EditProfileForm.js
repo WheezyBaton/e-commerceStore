@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { updateUserApi } from "@/lib/api";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
@@ -30,21 +31,8 @@ export default function EditProfileForm({ userData, onClose }) {
 
       const handleSubmit = async (values) => {
             try {
-                  const response = await fetch(`https://fakestoreapi.com/users/${userData.id}`, {
-                        method: "PATCH",
-                        headers: {
-                              "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(values),
-                  });
-
-                  if (!response.ok) {
-                        throw new Error("Failed to update user details.");
-                  }
-
-                  const data = await response.json();
+                  const data = await updateUserApi(userData.id, values);
                   setMessage("User data has been updated!");
-                  console.log("Updated data:", data);
             } catch (error) {
                   setMessage(`Error: ${error.message}`);
             }

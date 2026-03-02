@@ -1,12 +1,14 @@
 // src/app/admin/orders/page.js
-"use client";
 
 import OrderManagement from "@/components/Admin/OrderManagement";
+import { getOrders } from "@/lib/api";
 
-export default function OrdersPage() {
+export default async function OrdersPage() {
+      const orders = await getOrders();
+
       return (
             <div>
-                  <OrderManagement />
+                  <OrderManagement initialOrders={orders} />
             </div>
       );
 }

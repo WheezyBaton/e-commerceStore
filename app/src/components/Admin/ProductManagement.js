@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { useFetch } from "@/hooks/useFetch";
+// src/components/Admin/ProductManagement.js
+"use client";
 
-export default function ProductManagement() {
-      const { data: fetchedProducts, loading, error } = useFetch("https://fakestoreapi.com/products");
-      const [products, setProducts] = useState([]);
+import { useState } from "react";
+import { addProductApi, deleteProductApi, updateProductApi } from "@/lib/api";
+
+export default function ProductManagement({ initialProducts = [] }) {
+      const [products, setProducts] = useState(initialProducts);
       const [newProduct, setNewProduct] = useState({
             title: "",
             price: "",
@@ -15,24 +16,11 @@ export default function ProductManagement() {
       const [expandedProductId, setExpandedProductId] = useState(null);
       const [editingProduct, setEditingProduct] = useState(null);
 
-      useEffect(() => {
-            if (fetchedProducts) {
-                  setProducts(fetchedProducts);
-            }
-      }, [fetchedProducts]);
-
       const addProduct = async () => {
             try {
-                  const response = await fetch("https://fakestoreapi.com/products", {
-                        method: "POST",
-                        headers: {
-                              "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(newProduct),
-                  });
-                  const data = await response.json();
+                  const data = await addProductApi(newProduct);
                   console.log("Product added successfully:", data);
-                  setProducts([...products, data]);
+                  setProducts([...products, { ...newProduct, id: data.id }]);
                   setNewProduct({ title: "", price: "", description: "", image: "", category: "" });
             } catch (error) {
                   console.error("Error adding product:", error);
@@ -41,9 +29,7 @@ export default function ProductManagement() {
 
       const deleteProduct = async (productId) => {
             try {
-                  await fetch(`https://fakestoreapi.com/products/${productId}`, {
-                        method: "DELETE",
-                  });
+                  await deleteProductApi(productId);
                   console.log("Product deleted successfully:", productId);
                   setProducts(products.filter((product) => product.id !== productId));
             } catch (error) {
@@ -53,17 +39,10 @@ export default function ProductManagement() {
 
       const updateProduct = async (productId, updatedProduct) => {
             try {
-                  const response = await fetch(`https://fakestoreapi.com/products/${productId}`, {
-                        method: "PATCH",
-                        headers: {
-                              "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(updatedProduct),
-                  });
-                  const data = await response.json();
+                  const data = await updateProductApi(productId, updatedProduct);
                   console.log("Product updated successfully:", data);
                   setProducts(
-                        products.map((product) => (product.id === productId ? { ...product, ...data } : product))
+                        products.map((product) => (product.id === productId ? { ...product, ...data } : product)),
                   );
                   setEditingProduct(null);
             } catch (error) {
@@ -82,14 +61,6 @@ export default function ProductManagement() {
       const cancelEditing = () => {
             setEditingProduct(null);
       };
-
-      if (loading) {
-            return <p className="text-center">Loading products...</p>;
-      }
-
-      if (error) {
-            return <p className="text-red-500 text-center">Error: {error.message}</p>;
-      }
 
       return (
             <div className="p-4">
@@ -149,7 +120,7 @@ export default function ProductManagement() {
                                                 <p>
                                                       <strong>Category:</strong> {product.category}
                                                 </p>
-                                                <div className="relative w-32 h-32 mt-2">
+                                                <div className="relative w-32 h-32 mt-2 flex">
                                                       <img
                                                             src={product.image}
                                                             alt={product.title}

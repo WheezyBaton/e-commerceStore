@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { loginApi } from "@/lib/api";
 
 export default function UserLogin() {
       const [username, setUsername] = useState("");
@@ -14,30 +15,15 @@ export default function UserLogin() {
 
       const handleSubmit = async (e) => {
             e.preventDefault();
-
-            const userData = { username, password };
-
             try {
-                  const response = await fetch("https://fakestoreapi.com/auth/login", {
-                        method: "POST",
-                        headers: {
-                              "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(userData),
-                  });
-
-                  const data = await response.json();
-
-                  if (response.ok && data.token) {
+                  const data = await loginApi({ username, password });
+                  if (data.token) {
                         login(data.token);
                         setMessage("Login successful! Redirecting...");
                         router.push("/");
-                  } else {
-                        setMessage("Login failed. Please check your credentials.");
                   }
             } catch (error) {
-                  setMessage("An error occurred during login.");
-                  console.error("Error:", error);
+                  setMessage("Login failed. Please check your credentials.");
             }
       };
 

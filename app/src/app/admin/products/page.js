@@ -1,12 +1,14 @@
 // src/app/admin/products/page.js
-"use client";
 
 import ProductManagement from "@/components/Admin/ProductManagement";
+import { getProducts } from "@/lib/api";
 
-export default function ProductsPage() {
+export default async function AdminProductsPage() {
+      const products = await getProducts();
+
       return (
             <div>
-                  <ProductManagement />
+                  <ProductManagement initialProducts={products} />
             </div>
       );
 }

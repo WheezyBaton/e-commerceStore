@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { getProducts } from "@/lib/api";
 
 export default function SearchBar() {
       const router = useRouter();
@@ -12,19 +13,17 @@ export default function SearchBar() {
       const inputRef = useRef(null);
 
       useEffect(() => {
-            const fetchProducts = async () => {
-                  const response = await fetch("https://fakestoreapi.com/products");
-                  const data = await response.json();
+            const fetchAll = async () => {
+                  const data = await getProducts();
                   setAllProducts(data);
             };
-
-            fetchProducts();
+            fetchAll();
       }, []);
 
       useEffect(() => {
             if (searchTerm) {
                   const filteredProducts = allProducts.filter((product) =>
-                        product.title.toLowerCase().includes(searchTerm.toLowerCase())
+                        product.title.toLowerCase().includes(searchTerm.toLowerCase()),
                   );
                   setSearchResults(filteredProducts);
             } else {
